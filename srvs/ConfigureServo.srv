@@ -1,0 +1,7 @@
+uint16 id
+uint16 center 2048
+uint16 range 4096
+bool invert_direction false
+---
+bool error false
+string error_message ""
