@@ -13,9 +13,9 @@
 // limitations under the License.
 #include "ServoManagerNode.hpp"
 
-#include "i2c_pwm/Pca9685.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <memory>
+#include "i2c_pwm/Pca9685.hpp"
 #include "ServoManager.hpp"
 
 ServoManagerNode::ServoManagerNode()
