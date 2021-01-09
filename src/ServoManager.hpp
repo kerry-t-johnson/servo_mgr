@@ -40,7 +40,9 @@ public:
   void configureServo(uint16_t id,
                       uint16_t center = i2c_pwm::Pca9685::MAX_VALUE / 2,
                       uint16_t range = i2c_pwm::Pca9685::MAX_VALUE,
-                      bool invertDirection = false);
+                      bool invertDirection = false,
+                      uint16_t defaultValue = i2c_pwm::Pca9685::MAX_VALUE / 2);
+  void resetServo(uint16_t id);
   void setServo(uint16_t id, uint16_t data);
   void setServo(uint16_t id, float data);
 

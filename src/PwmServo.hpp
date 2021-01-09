@@ -17,6 +17,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <stdint.h>
 #include <memory>
+#include <string>
 
 namespace i2c_pwm {
 class Pca9685;
@@ -38,7 +39,15 @@ public:
 
   uint16_t value() const;
 
-  void configure(uint16_t center, uint16_t range, bool invertDirection);
+  void configure(uint16_t center,
+                 uint16_t range,
+                 bool invertDirection,
+                 uint16_t defaultValue);
+
+  /**
+   * @brief Resets the servo to its default value
+   */
+  void reset();
 
   /**
    * @brief Sets the absolute value of the servo in the interval [0, 4096]
@@ -69,13 +78,39 @@ public:
   void set(float value);
 
 private:
+
+  template<typename T> T clamp(T value,
+                               T min,
+                               T max,
+                               const std::string &msg) const;
+
   std::shared_ptr<i2c_pwm::Pca9685> pcaBoard_;
   const uint16_t id_;
   uint16_t center_;
   uint16_t range_;
   bool invertDirection_;
+  uint16_t defaultValue_;
   uint16_t value_;
   rclcpp::Logger logger_;
 };
 
+// ============================================================================
+
+template<typename T>
+T PwmServo::clamp(T value, T min, T max, const std::string &msg) const
+{
+  const T newValue = std::min(std::max(value, min), max);
+
+  if (newValue != value) {
+    RCLCPP_WARN(logger_,
+                "[Servo %d] Invalid %s value: %s (must be in the interval [%s, %s])",
+                id_,
+                msg.c_str(),
+                std::to_string(value).c_str(),
+                std::to_string(min).c_str(),
+                std::to_string(max).c_str());
+  }
+
+  return newValue;
+}
 #endif  // PWMSERVO_HPP_

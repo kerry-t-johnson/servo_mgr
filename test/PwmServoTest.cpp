@@ -35,6 +35,10 @@ public:
   {
   }
 
+  void allStop() override
+  {
+  }
+
   void sleepMode(__attribute__((unused)) bool _) override
   {
   }
@@ -96,7 +100,10 @@ TEST(PwmServoTests, testConfigure)
 
   PwmServo uut(mockPca9685, EXPECTED_ID);
 
-  uut.configure(Pca9685::MAX_VALUE / 2, Pca9685::MAX_VALUE, false);
+  uut.configure(Pca9685::MAX_VALUE / 2,
+                Pca9685::MAX_VALUE,
+                false,
+                Pca9685::MAX_VALUE / 2);
   EXPECT_EQ(uut.center(), Pca9685::MAX_VALUE / 2);
   EXPECT_EQ(uut.range(), Pca9685::MAX_VALUE);
   EXPECT_EQ(uut.invertDirection(), false);
@@ -110,7 +117,10 @@ TEST(PwmServoTests, testConfigureOutOfRange)
 
   PwmServo uut(mockPca9685, EXPECTED_ID);
 
-  uut.configure(Pca9685::MAX_VALUE + 1, Pca9685::MAX_VALUE + 1, false);
+  uut.configure(Pca9685::MAX_VALUE + 1,
+                Pca9685::MAX_VALUE + 1,
+                false,
+                Pca9685::MAX_VALUE / 2);
   EXPECT_EQ(uut.center(), Pca9685::MAX_VALUE / 2);
   EXPECT_EQ(uut.range(), Pca9685::MAX_VALUE);
   EXPECT_EQ(uut.invertDirection(), false);
@@ -188,7 +198,7 @@ TEST(PwmServoTests, testSetProportionalCustomRange)
   std::shared_ptr<MockPca9685> mockPca9685(new MockPca9685());
 
   PwmServo uut(mockPca9685, EXPECTED_ID);
-  uut.configure(CUSTOM_RANGE / 2, CUSTOM_RANGE, false);
+  uut.configure(CUSTOM_RANGE / 2, CUSTOM_RANGE, false, CUSTOM_RANGE / 2);
 
   for (int i = 0; i <= CUSTOM_RANGE / STEP_SIZE_ABSOLUTE; ++i) {
     uut.set(-1.0f + (i * STEP_SIZE_PROPORTIONAL));
@@ -214,7 +224,10 @@ TEST(PwmServoTests, testSetProportionalInverted)
   std::shared_ptr<MockPca9685> mockPca9685(new MockPca9685());
 
   PwmServo uut(mockPca9685, EXPECTED_ID);
-  uut.configure(Pca9685::MAX_VALUE / 2, Pca9685::MAX_VALUE, true);
+  uut.configure(Pca9685::MAX_VALUE / 2,
+                Pca9685::MAX_VALUE,
+                true,
+                Pca9685::MAX_VALUE / 2);
 
   for (int i = 0; i <= Pca9685::MAX_VALUE / STEP_SIZE_ABSOLUTE; ++i) {
     uut.set(-1.0f + (i * STEP_SIZE_PROPORTIONAL));
@@ -240,7 +253,7 @@ TEST(PwmServoTests, testSetProportionalInvertedCustomRange)
   std::shared_ptr<MockPca9685> mockPca9685(new MockPca9685());
 
   PwmServo uut(mockPca9685, EXPECTED_ID);
-  uut.configure(CUSTOM_RANGE / 2, CUSTOM_RANGE, true);
+  uut.configure(CUSTOM_RANGE / 2, CUSTOM_RANGE, true, CUSTOM_RANGE / 2);
 
   for (int i = 0; i <= CUSTOM_RANGE / STEP_SIZE_ABSOLUTE; ++i) {
     uut.set(-1.0f + (i * STEP_SIZE_PROPORTIONAL));

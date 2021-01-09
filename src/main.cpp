@@ -20,9 +20,13 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
 
-  std::shared_ptr<rclcpp::Node> node(new ServoManagerNode);
+  // I -think- the default constructor grabs arguments from the global context
+  // but need to verify:
+  rclcpp::NodeOptions options;
 
-  rclcpp::spin(node);
+  std::shared_ptr < rclcpp::Node > node(new ServoManagerNode(options));
+
+  rclcpp::spin (node);
   rclcpp::shutdown();
 }
 

@@ -1,7 +1,8 @@
 uint16 id
-uint16 center 2048
-uint16 range 4096
-bool invert_direction false
+uint16 center           2048
+uint16 range            4096
+bool   invert_direction false
+uint16 default_value    0
 ---
-bool error false
-string error_message ""
+bool   successful true
+string message    ""

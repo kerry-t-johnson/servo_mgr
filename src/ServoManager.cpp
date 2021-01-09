@@ -52,7 +52,8 @@ void ServoManager::configurePca9685(uint8_t id,
 void ServoManager::configureServo(uint16_t id,
                                   uint16_t center,
                                   uint16_t range,
-                                  bool invertDirection)
+                                  bool invertDirection,
+                                  uint16_t defaultValue)
 {
   const uint8_t boardId = id / i2c_pwm::Pca9685::NUM_CHANNELS;
 
@@ -79,7 +80,7 @@ void ServoManager::configureServo(uint16_t id,
                 id % i2c_pwm::Pca9685::NUM_CHANNELS);
   }
 
-  servo->configure(center, range, invertDirection);
+  servo->configure(center, range, invertDirection, defaultValue);
 }
 
 void ServoManager::setAll(uint16_t value)
@@ -93,6 +94,19 @@ void ServoManager::setAll(float value)
 {
   for (auto iter = servos_.begin(); iter != servos_.end(); ++iter) {
     iter->second->set(value);
+  }
+}
+
+void ServoManager::resetServo(uint16_t id)
+{
+  servo_collection::const_iterator iter = servos_.find(id);
+
+  if (iter != servos_.end()) {
+    iter->second->reset();
+  } else {
+    std::ostringstream ostr;
+    ostr << "Servo " << id << " does not exist";
+    throw std::runtime_error(ostr.str());
   }
 }
 

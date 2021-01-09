@@ -1,0 +1,5 @@
+uint16   id
+uint16   delay_millis 30
+uint8    num_tests    1
+float32  step_size    0.20
+---

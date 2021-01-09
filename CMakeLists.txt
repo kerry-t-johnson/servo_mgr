@@ -20,6 +20,7 @@ find_package(rosidl_cmake REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}_interfaces
   srvs/ConfigurePCA9685.srv
   srvs/ConfigureServo.srv
+  srvs/TestServo.srv
   msgs/ServoControl.msg
   LIBRARY_NAME ${PROJECT_NAME}
 )

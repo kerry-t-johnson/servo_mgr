@@ -19,13 +19,14 @@
 #include "servo_mgr/msg/servo_control.hpp"
 #include "servo_mgr/srv/configure_pca9685.hpp"
 #include "servo_mgr/srv/configure_servo.hpp"
+#include "servo_mgr/srv/test_servo.hpp"
 
 class ServoManager;
 
 class ServoManagerNode: public rclcpp::Node
 {
 public:
-  ServoManagerNode();
+  explicit ServoManagerNode(rclcpp::NodeOptions options);
   virtual ~ServoManagerNode();
 
 private:
@@ -35,11 +36,15 @@ private:
   void onConfigureServo(const servo_mgr::srv::ConfigureServo::Request::SharedPtr request,
                         servo_mgr::srv::ConfigureServo::Response::SharedPtr response);
 
+  void onTestServo(const servo_mgr::srv::TestServo::Request::SharedPtr request,
+                   servo_mgr::srv::TestServo::Response::SharedPtr response);
+
   void onServoControl(const servo_mgr::msg::ServoControl::SharedPtr msg);
   void onServoControlAbsolute(const servo_mgr::msg::ServoControl::SharedPtr msg);
 
   rclcpp::Service<servo_mgr::srv::ConfigurePCA9685>::SharedPtr configurePca9685Svc_;
   rclcpp::Service<servo_mgr::srv::ConfigureServo>::SharedPtr configureServoSvc_;
+  rclcpp::Service<servo_mgr::srv::TestServo>::SharedPtr testServoSvc_;
   rclcpp::Subscription<servo_mgr::msg::ServoControl>::SharedPtr servoControlSubscriber_;
   rclcpp::Subscription<servo_mgr::msg::ServoControl>::SharedPtr servoControlAbsoluteSubscriber_;
   std::unique_ptr<ServoManager> impl_;
