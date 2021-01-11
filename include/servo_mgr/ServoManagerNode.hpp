@@ -20,13 +20,17 @@
 #include "servo_mgr/srv/configure_pca9685.hpp"
 #include "servo_mgr/srv/configure_servo.hpp"
 #include "servo_mgr/srv/test_servo.hpp"
+#include "servo_mgr/ServoManagerVisibilityControl.hpp"
 
 class ServoManager;
+
+namespace servo_mgr {
 
 class ServoManagerNode: public rclcpp::Node
 {
 public:
-  explicit ServoManagerNode(rclcpp::NodeOptions options);
+  SERVO_MGR_PUBLIC
+  explicit ServoManagerNode(const rclcpp::NodeOptions &options);
   virtual ~ServoManagerNode();
 
 private:
@@ -49,5 +53,7 @@ private:
   rclcpp::Subscription<servo_mgr::msg::ServoControl>::SharedPtr servoControlAbsoluteSubscriber_;
   std::unique_ptr<ServoManager> impl_;
 };
+
+}  // namespace servo_mgr
 
 #endif  // SERVOMANAGERNODE_HPP_

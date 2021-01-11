@@ -14,8 +14,11 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(i2c_pwm REQUIRED)
 find_package(rosidl_cmake REQUIRED)
+
+include_directories(include)
 
 rosidl_generate_interfaces(${PROJECT_NAME}_interfaces
   srvs/ConfigurePCA9685.srv
@@ -25,34 +28,43 @@ rosidl_generate_interfaces(${PROJECT_NAME}_interfaces
   LIBRARY_NAME ${PROJECT_NAME}
 )
 
-add_library(${PROJECT_NAME}_library SHARED
+add_library(${PROJECT_NAME} SHARED
   src/PwmServo.cpp
+  src/ServoManager.cpp
+  src/ServoManagerNode.cpp
 )
 
-ament_target_dependencies(${PROJECT_NAME}_library
+ament_target_dependencies(${PROJECT_NAME}
   "i2c_pwm"
   "rclcpp"
+  "rclcpp_components"
 )
 
-ament_export_targets(export_${PROJECT_NAME}_library HAS_LIBRARY_TARGET)
+rclcpp_components_register_nodes(${PROJECT_NAME}
+  "servo_mgr::ServoManagerNode"
+)
+
+# since the package installs libraries without exporting them
+# it needs to make sure that the library path is being exported
+if(NOT WIN32)
+  ament_environment_hooks(
+    "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}")
+endif()
+
+# ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 install(TARGETS
-  ${PROJECT_NAME}_library
-  EXPORT export_${PROJECT_NAME}_library
-  LIBRARY DESTINATION lib
+  ${PROJECT_NAME}
   INCLUDES DESTINATION include
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
-target_include_directories(${PROJECT_NAME}_library
+target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>)
-
-add_executable(${PROJECT_NAME}
-  src/ServoManager.cpp
-  src/ServoManagerNode.cpp
-  src/main.cpp
-)
 
 rosidl_target_interfaces(${PROJECT_NAME}
   ${PROJECT_NAME}_interfaces
@@ -62,15 +74,6 @@ rosidl_target_interfaces(${PROJECT_NAME}
 ament_target_dependencies(${PROJECT_NAME}
   i2c_pwm
   rclcpp
-)
-
-target_link_libraries(${PROJECT_NAME}
-  ${PROJECT_NAME}_library
-)
-
-install(
-  DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME}/
 )
 
 install(TARGETS
@@ -113,7 +116,7 @@ if(BUILD_TESTING)
   )
 
   target_link_libraries(${PROJECT_NAME}_test
-    ${PROJECT_NAME}_library
+    ${PROJECT_NAME}
   )
 
 endif()

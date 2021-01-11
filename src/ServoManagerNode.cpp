@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include "ServoManagerNode.hpp"
+#include "servo_mgr/ServoManagerNode.hpp"
 
 #include <math.h>
 #include <rclcpp/rclcpp.hpp>
@@ -19,7 +19,9 @@
 #include "i2c_pwm/Pca9685.hpp"
 #include "ServoManager.hpp"
 
-ServoManagerNode::ServoManagerNode(rclcpp::NodeOptions options)
+namespace servo_mgr {
+
+ServoManagerNode::ServoManagerNode(const rclcpp::NodeOptions &options)
   : rclcpp::Node("ServoManager", options), impl_(new ServoManager)
 {
   declare_parameter<bool>("use_mock_pca9685", false);
@@ -136,3 +138,12 @@ void ServoManagerNode::onServoControlAbsolute(const servo_mgr::msg::ServoControl
                  ex.what());
   }
 }
+
+}  // namespace servo_mgr
+
+#include "rclcpp_components/register_node_macro.hpp"
+
+// Register the component with class_loader.
+// This acts as a sort of entry point, allowing the component to be discoverable when its library
+// is being loaded into a running process.
+RCLCPP_COMPONENTS_REGISTER_NODE(servo_mgr::ServoManagerNode)
